@@ -75,8 +75,10 @@ h2{font-size:clamp(30px,4vw,46px);margin:14px 0 18px}
 .float-card{position:absolute;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:18px;padding:14px 18px;box-shadow:var(--shadow);max-width:230px}
 .float-card strong{display:block;font-size:14.5px}
 .float-card span{font-size:12.5px;color:var(--muted)}
-.fc1{top:6%;left:-56px;animation:floaty 5s ease-in-out infinite}
-.fc2{bottom:8%;right:-30px;animation:floaty 6s ease-in-out infinite reverse}
+.fc1{top:6%;left:-56px}
+.fc2{bottom:8%;right:-30px}
+.fc1.floating{animation:floaty 5s ease-in-out infinite}
+.fc2.floating{animation:floaty 6s ease-in-out infinite reverse}
 @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
 .scroll-hint{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);width:26px;height:42px;border:2px solid var(--muted);border-radius:14px;display:flex;justify-content:center;padding-top:8px;opacity:.7}
 .scroll-hint i{width:4px;height:8px;border-radius:4px;background:var(--accent);animation:wheel 1.8s infinite}
@@ -119,10 +121,10 @@ h2{font-size:clamp(30px,4vw,46px);margin:14px 0 18px}
 /* ---------- depoimentos ---------- */
 .depo{background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .depo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin:48px 0 40px}
-.depo blockquote{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:30px;display:flex;flex-direction:column;gap:14px;transition:transform .3s,box-shadow .3s}
-.depo blockquote:hover{transform:translateY(-6px);box-shadow:var(--shadow)}
-.depo blockquote p{font-size:16.5px;font-family:var(--serif);font-style:italic}
-.depo blockquote footer{font-size:13px;color:var(--muted);margin-top:auto}
+.depo-point{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:30px;display:flex;flex-direction:column;gap:14px;transition:transform .3s,box-shadow .3s}
+.depo-point:hover{transform:translateY(-6px);box-shadow:var(--shadow)}
+.depo-point p{font-size:16.5px;font-family:var(--serif)}
+.stars{color:#d8a24a;letter-spacing:3px;font-size:15px}
 .depo-cta{margin-top:8px}
 
 /* ---------- consultório ---------- */
