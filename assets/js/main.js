@@ -15,38 +15,48 @@
 
   var WA_NUMBER = "5521997709554";
 
-  /* ---------- 1. Preloader (anime.js) ---------- */
-  var preTl = anime.timeline({
-    complete: heroIntro
-  });
+  /* ---------- 1. Preloader (GSAP) ---------- */
+  var preloaderEl = document.getElementById("preloader");
+  var preTl = gsap.timeline({ onComplete: heroIntro });
   preTl
-    .add({ targets: ".pre-bar i", width: "100%", duration: 700, easing: "easeInOutQuad" })
-    .add({ targets: "#preloader", opacity: 0, duration: 500, easing: "easeInOutQuad",
-      complete: function () { document.getElementById("preloader").style.display = "none"; } }, "+=120");
+    .to(".pre-bar i", { width: "100%", duration: .7, ease: "power2.inOut" })
+    .to("#preloader", {
+      opacity: 0, duration: .5, ease: "power2.inOut",
+      onComplete: function () { preloaderEl.style.display = "none"; }
+    }, "+=0.12");
+  /* rede de segurança: nunca prender a página no preloader */
+  setTimeout(function () {
+    if (preloaderEl.style.display !== "none") {
+      preloaderEl.style.display = "none";
+      if (!heroDone) heroIntro();
+    }
+  }, 4000);
 
-  /* ---------- 2. Entrada do hero (anime.js) ---------- */
+  /* ---------- 2. Entrada do hero (GSAP) ---------- */
+  var heroDone = false;
   function heroIntro() {
-    var tl = anime.timeline({ easing: "easeOutExpo" });
-    tl.add({ targets: '[data-hero="kicker"]', opacity: [0, 1], translateY: [18, 0], duration: 700 })
-      .add({ targets: '[data-hero="title"] .line > span', translateY: ["110%", "0%"], duration: 900, delay: anime.stagger(120) }, "-=450")
-      .add({ targets: '[data-hero="sub"]', opacity: [0, 1], translateY: [22, 0], duration: 700 }, "-=550")
-      .add({ targets: '[data-hero="ctas"] .btn', opacity: [0, 1], translateY: [22, 0], scale: [.94, 1], duration: 650, delay: anime.stagger(110) }, "-=500")
-      .add({ targets: '[data-hero="proof"]', opacity: [0, 1], translateY: [14, 0], duration: 600 }, "-=400")
-      .add({ targets: '[data-hero="media"] .hero-frame', opacity: [0, 1], scale: [.94, 1], rotate: [6, 2], duration: 1100 }, "-=900")
-      .add({ targets: '[data-hero="card1"]', opacity: [0, 1], translateX: [-24, 0], duration: 700 }, "-=600")
-      .add({ targets: '[data-hero="card2"]', opacity: [0, 1], translateX: [24, 0], duration: 700 }, "-=550");
-
-    /* estado inicial dos alvos do hero (antes da timeline rodar) */
-    gsap.set('[data-hero="kicker"],[data-hero="sub"],[data-hero="proof"]', { opacity: 0 });
-    gsap.set('[data-hero="ctas"] .btn', { opacity: 0 });
-    gsap.set('[data-hero="media"] .hero-frame', { opacity: 0 });
-    gsap.set('[data-hero="card1"],[data-hero="card2"]', { opacity: 0 });
+    if (heroDone) return;
+    heroDone = true;
+    var tl = gsap.timeline({ defaults: { ease: "expo.out" } });
+    tl.to('[data-hero="kicker"]', { opacity: 1, y: 0, duration: .7 }, 0)
+      .to('[data-hero="title"] .line > span', { yPercent: 0, duration: 1, stagger: .12 }, .15)
+      .to('[data-hero="sub"]', { opacity: 1, y: 0, duration: .7 }, .55)
+      .to('[data-hero="ctas"] .btn', { opacity: 1, y: 0, scale: 1, duration: .65, stagger: .11 }, .7)
+      .to('[data-hero="proof"]', { opacity: 1, y: 0, duration: .6 }, .9)
+      .to('[data-hero="media"] .hero-frame', { opacity: 1, scale: 1, rotate: 2, duration: 1.1 }, .35)
+      .to('[data-hero="card1"]', { opacity: 1, x: 0, duration: .7 }, 1)
+      .to('[data-hero="card2"]', { opacity: 1, x: 0, duration: .7 }, 1.1)
+      .add(function () {
+        document.querySelector('[data-hero="card1"]').classList.add("floating");
+        document.querySelector('[data-hero="card2"]').classList.add("floating");
+      });
   }
-  /* define o estado inicial imediatamente (antes do preloader terminar) */
-  gsap.set('[data-hero="kicker"],[data-hero="sub"],[data-hero="proof"]', { opacity: 0 });
-  gsap.set('[data-hero="ctas"] .btn', { opacity: 0 });
-  gsap.set('[data-hero="media"] .hero-frame', { opacity: 0 });
-  gsap.set('[data-hero="card1"],[data-hero="card2"]', { opacity: 0 });
+  /* estado inicial (antes do preloader sair) */
+  gsap.set('[data-hero="kicker"],[data-hero="sub"],[data-hero="proof"]', { opacity: 0, y: 18 });
+  gsap.set('[data-hero="ctas"] .btn', { opacity: 0, y: 22, scale: .94 });
+  gsap.set('[data-hero="media"] .hero-frame', { opacity: 0, scale: .94, rotate: 6 });
+  gsap.set('[data-hero="card1"]', { opacity: 0, x: -24 });
+  gsap.set('[data-hero="card2"]', { opacity: 0, x: 24 });
   gsap.set('[data-hero="title"] .line > span', { yPercent: 110 });
 
   /* ---------- 3. Reveals por scroll (GSAP ScrollTrigger) ---------- */
@@ -171,13 +181,16 @@
     e.target.value = out;
   });
 
-  /* ---------- 10. Microinteração nos depoimentos ---------- */
-  gsap.utils.toArray(".depo blockquote").forEach(function (q, i) {
+  /* ---------- 10. Microinteração nos depoimentos (anime.js) ---------- */
+  gsap.utils.toArray(".depo .depo-point").forEach(function (pt, i) {
     ScrollTrigger.create({
-      trigger: q, start: "top 85%", once: true,
+      trigger: pt, start: "top 85%", once: true,
       onEnter: function () {
-        anime({ targets: q.querySelectorAll(".stars"), scale: [0, 1], duration: 600, delay: 300 + i * 120, easing: "easeOutBack" });
+        anime({ targets: pt.querySelectorAll(".stars"), scale: [0, 1], duration: 600, delay: 200 + i * 120, easing: "easeOutBack" });
       }
     });
   });
+
+  /* recalibra os gatilhos de scroll depois que as imagens carregarem */
+  window.addEventListener("load", function () { ScrollTrigger.refresh(); });
 })();
